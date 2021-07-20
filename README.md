@@ -1,7 +1,7 @@
 Json reader for Delphi and Lazarus
 ===
 
-Json Reader is working with Delphi and Lazarus. It's partly compatible (but not fully) with Json reader from Delphi.
+Json Reader is working with Delphi and Lazarus. It's partially compatible with Json reader from Delphi.
 
 How to use it
 ---
@@ -12,14 +12,16 @@ uses
 {...}
   var
     s: string;
+    b: Boolean;
 {...}
-  json = TJsonReader.Create('{"some": "json string"}');
+  json = TJsonReader.Create('{"some": "json string", "other": true}');
   try
     while json.Read do
-      if json.PropertyName = 'some' then
-        s := json.ValueAsString else
-      if json.TokenType = {$IFDEF FPC}jtStartArray{$ELSE}StartArray{$ENDIF} then
-        ProcessJsonArray(json);
+      if json.TokenType = {$IFDEF FPC}jtPropertyName{$ELSE}TJsonToken.PropertyName{$ENDIF} then
+        if json.PropertyName = 'some' then
+          s := json.ReadAsString else
+        if json.PropertyName = 'other' then
+          b := json.ReadAsBoolean;
   finally
     json.Free;
   end;
